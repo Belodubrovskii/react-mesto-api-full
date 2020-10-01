@@ -1,42 +1,16 @@
 const router = require('express').Router();
-const path = require('path');
-const { getJsonFromFile } = require('../helpers/read-file.js');
+const {
+  createUser, getAllUsers, getUser, updateProfile, updateAvatar,
+} = require('../controllers/users.js');
 
-router.get('/users/:id', (req, res) => getJsonFromFile(path.join(__dirname, '..', 'data/users.json'))
-  .then((data) => {
-    if (!data) {
-      res
-        .status(500)
-        .send({ message: 'Запрашиваемый ресурс не найден' });
-      return;
-    }
+router.get('/users/:userId', getUser);
 
-    const foundUser = data.find((user) => user._id === req.params.id);
+router.get('/users', getAllUsers);
 
-    if (!foundUser) {
-      res
-        .status(404)
-        .send({ message: 'Нет пользователя с таким id' });
-      return;
-    }
+router.post('/users', createUser);
 
-    res
-      .status(200)
-      .send(foundUser);
-  }));
+router.patch('/users/me', updateProfile);
 
-router.get('/users', (req, res) => getJsonFromFile(path.join(__dirname, '..', 'data/users.json'))
-  .then((data) => {
-    if (!data) {
-      res
-        .status(500)
-        .send({ message: 'Запрашиваемый ресурс не найден' });
-      return;
-    }
-
-    res
-      .status(200)
-      .send(data);
-  }));
+router.patch('/users/me/avatar', updateAvatar);
 
 module.exports = router;
