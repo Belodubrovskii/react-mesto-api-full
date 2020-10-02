@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(v) {
-        return /^(ftp|http|https):\/\/[^ "]+$/.test(v);
+        return /^(ftp|http|https):\/\/([-\w.]+)\.([a-z]{2,})(\/|\/([\w#!:.?+=&%@!-/])*)?$/.test(v);
       },
       message: (props) => `${props.value} is not a valid url!`,
     },
