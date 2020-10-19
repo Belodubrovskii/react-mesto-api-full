@@ -1,4 +1,5 @@
 const User = require('../models/user.js');
+const NotFoundError = require('../errors/not-found-err');
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
@@ -19,19 +20,20 @@ const getAllUsers = (req, res) => {
     .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
 
-const getUser = (req, res) => {
+const getUser = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(new Error('NotValidId'))
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.message === 'NotValidId') {
-        return res.status(404).send({ message: 'Такого пользователя нет' });
+        throw new NotFoundError('Нет пользователя с таким id');
       }
       if (err.name === 'CastError') {
         return res.status(400).send({ message: 'Некорректный Id пользователя' });
       }
       return res.status(500).send({ message: 'На сервере произошла ошибка' });
-    });
+    })
+    .catch(next);
 };
 
 const updateProfile = (req, res) => {
