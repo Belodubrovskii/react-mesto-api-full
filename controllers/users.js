@@ -77,7 +77,6 @@ const getUser = (req, res, next) => {
 };
 
 const getUserInfo = (req, res, next) => {
-  console.log(req.user._id)
   User.findById(req.user._id)
     .orFail(new Error('NotValidId'))
     .then((user) => res.send({ data: user }))
