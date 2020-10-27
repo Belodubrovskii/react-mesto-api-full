@@ -1,5 +1,5 @@
 {
-  "name": "express-mesto",
+  "name": "react-mesto-api-full",
   "version": "1.0.0",
   "description": "`/public` — статика, полученная в результате билда фронтенд-приложения на Реакте  \r `/data` — JSON-файлы для временной эмуляции работы с базой данных  \r `/routes` — папка с файлами роутера",
   "main": "app.js",
@@ -9,19 +9,28 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Belodubrovskii/express-mesto.git"
+    "url": "git+https://github.com/Belodubrovskii/react-mesto-api-full.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Belodubrovskii/express-mesto/issues"
+    "url": "https://github.com/Belodubrovskii/react-mesto-api-full/issues"
   },
-  "homepage": "https://github.com/Belodubrovskii/express-mesto#readme",
+  "homepage": "https://github.com/Belodubrovskii/react-mesto-api-full#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "celebrate": "^13.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "mongoose": "^5.10.6"
+    "express-winston": "^4.0.5",
+    "joi": "^17.3.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.6",
+    "validator": "^13.1.17",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "eslint": "^7.8.1",

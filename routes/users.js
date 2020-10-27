@@ -1,16 +1,48 @@
 const router = require('express').Router();
+const { celebrate, Joi } = require('celebrate');
 const {
-  createUser, getAllUsers, getUser, updateProfile, updateAvatar,
+  createUser, getAllUsers, getUser, updateProfile, updateAvatar, login, getUserInfo,
 } = require('../controllers/users.js');
+const auth = require('../middlewares/auth');
 
-router.get('/users/:userId', getUser);
+router.post('/signin', celebrate({
+  body: Joi.object().keys({
+    password: Joi.string().required().min(6),
+    email: Joi.string().email().required(),
+  }),
+}), login);
+
+router.post('/signup', celebrate({
+  body: Joi.object().keys({
+    password: Joi.string().required().min(6),
+    email: Joi.string().email().required(),
+  }),
+}), createUser);
+
+router.use(auth);
+
+router.get('/users/:userId', celebrate({
+  body: Joi.object().keys({
+    password: Joi.string().required().min(6),
+    email: Joi.string().email().required(),
+  }),
+}), getUser);
 
 router.get('/users', getAllUsers);
 
-router.post('/users', createUser);
+router.get('/users/me', getUserInfo);
 
-router.patch('/users/me', updateProfile);
+router.patch('/users/me', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
+  }),
+}), updateProfile);
 
-router.patch('/users/me/avatar', updateAvatar);
+router.patch('/users/me/avatar', celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().required().regex(/^(ftp|http|https):\/\/([-\w.]+)\.([a-z]{2,})(\/|\/([\w#!:.?+=&%@!-/])*)?$/),
+  }),
+}), updateAvatar);
 
 module.exports = router;

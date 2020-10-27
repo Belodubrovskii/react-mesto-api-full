@@ -1,8 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
+const cors = require('cors');
 const bodyParser = require('body-parser');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+const NotFoundError = require('./errors/not-found-err');
+const IncorrectDataError = require('./errors/incorrect-data');
 
 const app = express();
+
 const usersRouter = require('./routes/users.js');
 const cardsRouter = require('./routes/cards.js');
 
@@ -13,23 +19,25 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
+app.use(cors());
+
 app.use(bodyParser.json());
 
 app.use((err, req, res, next) => {
   if (err.name === 'SyntaxError') {
-    return res.status(400).send({ message: 'Невалидный JSON' });
+    return next(new IncorrectDataError('Невалидный JSON'));
   }
   return next();
 });
 
 const { PORT = 3000 } = process.env;
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '5f72562c527e4512f46d5d20',
-  };
+app.use(requestLogger);
 
-  next();
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
 });
 
 app.use(
@@ -40,13 +48,14 @@ app.use(
   cardsRouter,
 );
 
-app.use('*', (req, res) => {
-  res
-    .status(404)
-    .send({ message: 'Запрашиваемый ресурс не найден' });
-});
+app.use('*', (req, res, next) => next(new NotFoundError('Запрашиваемый ресурс не найден')));
 
-app.use((err, req, res) => {
+app.use(errorLogger);
+
+app.use(errors());
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 500
   const { statusCode = 500, message } = err;
 
