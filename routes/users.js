@@ -21,16 +21,16 @@ router.post('/signup', celebrate({
 
 router.use(auth);
 
+router.get('/users/me', getUserInfo);
+
+router.get('/users', getAllUsers);
+
 router.get('/users/:userId', celebrate({
   body: Joi.object().keys({
     password: Joi.string().required().min(6),
     email: Joi.string().email().required(),
   }),
 }), getUser);
-
-router.get('/users', getAllUsers);
-
-router.get('/users/me', getUserInfo);
 
 router.patch('/users/me', celebrate({
   body: Joi.object().keys({
