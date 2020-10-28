@@ -6,12 +6,13 @@ const User = require('../models/user.js');
 const NotFoundError = require('../errors/not-found-err');
 const IncorrectDataError = require('../errors/incorrect-data');
 const UnauthorizedError = require('../errors/unauthorized-error');
+const ConflictError = require('../errors/conflict-err');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 const createUser = (req, res, next) => {
   const {
-    name = 'User', about = 'Something cool', avatar = 'https://pictures.s3.yandex.net/frontend-developer/ava.jpg', email, password,
+    name = 'User', about = 'Something cool', avatar = 'https://ichef.bbci.co.uk/news/640/cpsprodpb/5513/production/_109997712_baby-yoda-11.jpg', email, password,
   } = req.body;
 
   if (!(email && password)) {
@@ -26,8 +27,8 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new IncorrectDataError('Переданны некорректные данные');
-      } else if (err.name === 'MongoError') {
-        throw new IncorrectDataError('Пользователь с таким email уже зарегистрирован');
+      } else if (err.name === 'MongoError' || err.code === 11000) {
+        throw new ConflictError('Пользователь с таким email уже зарегистрирован');
       }
       throw err;
     })
@@ -81,7 +82,6 @@ const getUserInfo = (req, res, next) => {
     .orFail(new Error('NotValidId'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      console.log('dffd')
       if (err.message === 'NotValidId') {
         throw new NotFoundError('Нет пользователя с таким id');
       }

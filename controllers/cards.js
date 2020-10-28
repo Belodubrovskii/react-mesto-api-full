@@ -2,7 +2,7 @@
 const Card = require('../models/card.js');
 const NotFoundError = require('../errors/not-found-err');
 const IncorrectDataError = require('../errors/incorrect-data');
-const UnauthorizedError = require('../errors/unauthorized-error');
+const ForbiddenError = require('../errors/forbidden-error');
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
@@ -34,7 +34,7 @@ const deleteCard = (req, res, next) => {
         card.remove();
         res.send(card);
       } else {
-        return next(new UnauthorizedError('Чужие карточки удалять нельзя!'));
+        return next(new ForbiddenError('Чужие карточки удалять нельзя!'));
       }
     })
     .catch((err) => {

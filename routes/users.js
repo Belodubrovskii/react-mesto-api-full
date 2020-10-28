@@ -7,14 +7,14 @@ const auth = require('../middlewares/auth');
 
 router.post('/signin', celebrate({
   body: Joi.object().keys({
-    password: Joi.string().required().min(6),
+    password: Joi.string().required().min(6).regex(/[^\s]/),
     email: Joi.string().email().required(),
   }),
 }), login);
 
 router.post('/signup', celebrate({
   body: Joi.object().keys({
-    password: Joi.string().required().min(6),
+    password: Joi.string().required().min(6).regex(/[^\s]/),
     email: Joi.string().email().required(),
   }),
 }), createUser);
@@ -26,9 +26,8 @@ router.get('/users/me', getUserInfo);
 router.get('/users', getAllUsers);
 
 router.get('/users/:userId', celebrate({
-  body: Joi.object().keys({
-    password: Joi.string().required().min(6),
-    email: Joi.string().email().required(),
+  params: Joi.object().keys({
+    userId: Joi.string().hex().length(24),
   }),
 }), getUser);
 
