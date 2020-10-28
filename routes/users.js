@@ -7,14 +7,14 @@ const auth = require('../middlewares/auth');
 
 router.post('/signin', celebrate({
   body: Joi.object().keys({
-    password: Joi.string().required().min(6).regex(/[^\s]/),
+    password: Joi.string().required().min(6).regex(/^\S+$/),
     email: Joi.string().email().required(),
   }),
 }), login);
 
 router.post('/signup', celebrate({
   body: Joi.object().keys({
-    password: Joi.string().required().min(6).regex(/[^\s]/),
+    password: Joi.string().required().min(6).regex(/^\S+$/),
     email: Joi.string().email().required(),
   }),
 }), createUser);
